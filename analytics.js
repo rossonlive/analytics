@@ -17,7 +17,7 @@
                 .then(data => {
                     const ipAddress = data.ip;
                     const message = { url: window.location.href, ip: data.ip };
-                    fetch("http://golittle.ngrok.app/analytics/proxy/" + ipAddress, {
+                    fetch("https://golittle.ngrok.app/analytics/proxy/" + ipAddress, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -58,7 +58,7 @@
         // Function to send click data to the central server
         function sendDataToServer(data) {
             console.log("Fetch API Called", data);
-            fetch("http://golittle.ngrok.app/analytics/trackclicks", {
+            fetch("https://golittle.ngrok.app/analytics/trackclicks", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
