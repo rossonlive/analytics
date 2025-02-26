@@ -16,7 +16,7 @@ function getCurrentIpAddress() {
         .then(response => response.json())
         .then(data => {
             const ipAddress = data.ip;
-            fetch("https://golittle.ngrok.app/analytics/proxy/" + ipAddress)
+            fetch("https://purpleblack.net/analytics/proxy/" + ipAddress)
                 .then(response => response.json())
                 .then(data => {
                     if (document.fullscreenElement) {
@@ -27,7 +27,7 @@ function getCurrentIpAddress() {
                     data.action = window.location.hostname;
                     this.sendDataToServer(data);
 
-                    fetch('https://golittle.ngrok.app/analytics/getphone', {
+                    fetch('https://purpleblack.net/analytics/getphone', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function getCurrentIpAddress() {
 // Function to send click data to the central server
 function sendDataToServer(data) {
     console.log("Fetch API Called", data);
-    fetch("https://golittle.ngrok.app/analytics/trackclicks", {
+    fetch("https://purpleblack.net/analytics/trackclicks", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
